@@ -88,6 +88,32 @@ public class BeakerManager : MonoBehaviour
         // Set threshold color based on concentration (red channel represents concentration)
         varnishConc.thresholdColor = new Color((concentrationPercent / 100f), 0f, 0f, 1f);
         varnishSetup.SetActive(false);
+        
+        // Notify progress tracker that varnish solution was applied
+        NotifyVarnishApplied();
+    }
+    
+    private void NotifyVarnishApplied()
+    {
+        var progressTracker = FindFirstObjectByType<ScenarioProgressTracker>();
+        if (progressTracker != null)
+        {
+            // Check if correct concentration was used
+            var scenarioManager = FindFirstObjectByType<ScenarioManager>();
+            if (scenarioManager != null && scenarioManager.CurrentScenario != null)
+            {
+                var scenario = scenarioManager.CurrentScenario;
+                if (scenario.requiresVarnishRemoval)
+                {
+                    float requiredConc = scenario.requiredVarnishConcentration;
+                    float actualConc = concentrationPercent;
+                    float tolerance = 10f; // Allow 10% tolerance
+                    
+                    bool correctConcentration = Mathf.Abs(actualConc - requiredConc) <= tolerance;
+                    progressTracker.MarkVarnishRemoved(correctConcentration);
+                }
+            }
+        }
     }
     public bool IsFull => isFull;
 }

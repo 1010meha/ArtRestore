@@ -39,6 +39,12 @@ public class PuzzleManager : MonoBehaviour
         finishedPainting.SetActive(true);
         buttons.SetActive(true);
         gameObject.SetActive(false);
-
+        
+        // Notify progress tracker if it exists
+        var progressTracker = FindFirstObjectByType<ScenarioProgressTracker>();
+        if (progressTracker != null)
+        {
+            progressTracker.MarkPuzzleCompleted();
+        }
     }
 }
