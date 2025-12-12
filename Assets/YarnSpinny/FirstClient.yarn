@@ -1,0 +1,30 @@
+title: Start
+---
+Client: Hello! I'd like this painting restored!
+Player: Of course! Let me take a look at it.
+Client: This first painting simply needs some oil base to wipe some gunk off.
+Player: I'll get started right away!
+<<jump PaintingSetup>>
+===
+
+title: PaintingSetup
+---
+// Painting is now set up, player can work on it
+// This node can be used to trigger any setup needed
+<<jump WaitForCompletion>>
+===
+
+title: WaitForCompletion
+---
+// Player is working on the restoration
+// This dialogue will be called when they click complete
+<<jump Completion>>
+===
+
+title: Completion
+---
+Client: Thanks!
+Player: You're welcome! Come back anytime if you need more restoration work done.
+<<stop>>
+===
+
