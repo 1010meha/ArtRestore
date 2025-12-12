@@ -37,23 +37,22 @@ public class YarnSpinnerSetupChecker : MonoBehaviour
             
             // Check if YarnProject has source files
             #if UNITY_EDITOR
-            var project = dialogueRunner.yarnProject;
-            var importer = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(project)) as Yarn.Unity.YarnProjectImporter;
-            if (importer != null)
+            try
             {
-                Debug.Log($"YarnSpinnerSetupChecker: ✅ YarnProject has {importer.sourceFiles.Count} source file(s)");
-                
-                // List available nodes
-                var compilationResult = project.GetCompilationResult();
-                if (compilationResult != null && compilationResult.Program != null)
+                var project = dialogueRunner.yarnProject;
+                var path = AssetDatabase.GetAssetPath(project);
+                if (!string.IsNullOrEmpty(path))
                 {
-                    var nodes = compilationResult.Program.Nodes.Keys;
-                    Debug.Log($"YarnSpinnerSetupChecker: ✅ Available dialogue nodes: {string.Join(", ", nodes)}");
+                    var importer = AssetImporter.GetAtPath(path);
+                    if (importer != null)
+                    {
+                        Debug.Log($"YarnSpinnerSetupChecker: ✅ YarnProject found at: {path}");
+                    }
                 }
-                else
-                {
-                    Debug.LogWarning("YarnSpinnerSetupChecker: ⚠️ YarnProject has not been compiled. Check Console for compilation errors.");
-                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"YarnSpinnerSetupChecker: Could not check YarnProject details: {e.Message}");
             }
             #endif
         }
@@ -93,18 +92,9 @@ public class YarnSpinnerSetupChecker : MonoBehaviour
             return;
         }
         
-        #if UNITY_EDITOR
-        var compilationResult = dialogueRunner.yarnProject.GetCompilationResult();
-        if (compilationResult != null && compilationResult.Program != null)
-        {
-            var nodes = compilationResult.Program.Nodes.Keys;
-            Debug.Log($"Available dialogue nodes:\n{string.Join("\n", nodes)}");
-        }
-        else
-        {
-            Debug.LogWarning("YarnSpinnerSetupChecker: YarnProject has not been compiled. Check Console for errors.");
-        }
-        #endif
+        Debug.Log($"YarnSpinnerSetupChecker: YarnProject is '{dialogueRunner.yarnProject.name}'");
+        Debug.Log("To see available nodes, check the YarnProject asset in the Inspector or try starting a dialogue node.");
+        Debug.Log("If you get 'node not found' errors, check that your .yarn files are included in the YarnProject's source files.");
     }
 }
 
