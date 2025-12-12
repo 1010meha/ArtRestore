@@ -106,26 +106,29 @@ public class ScenarioManager : MonoBehaviour
         if (paintingDisplay != null && scenario.paintingSprite != null)
         {
             paintingDisplay.sprite = scenario.paintingSprite;
+            Debug.Log($"ScenarioManager: Set paintingDisplay sprite to '{scenario.paintingSprite.name}'");
         }
         
-        // Set up canvas if painting canvas exists
+        // Set up canvas if painting canvas exists - use CanvasManager's SetSprite method
         if (paintingCanvas != null && scenario.paintingSprite != null)
         {
-            var canvasSR = paintingCanvas.GetComponent<SpriteRenderer>();
-            if (canvasSR != null)
-            {
-                canvasSR.sprite = scenario.paintingSprite;
-            }
+            paintingCanvas.SetSprite(scenario.paintingSprite);
+            Debug.Log($"ScenarioManager: Set paintingCanvas sprite to '{scenario.paintingSprite.name}'");
+        }
+        else if (paintingCanvas == null)
+        {
+            Debug.LogWarning("ScenarioManager: paintingCanvas is not assigned!");
+        }
+        else if (scenario.paintingSprite == null)
+        {
+            Debug.LogWarning($"ScenarioManager: Scenario '{scenario.name}' has no paintingSprite assigned!");
         }
         
         // Set up varnish layer if provided
         if (varnishCanvas != null && scenario.varnishLayerSprite != null)
         {
-            var varnishSR = varnishCanvas.GetComponent<SpriteRenderer>();
-            if (varnishSR != null)
-            {
-                varnishSR.sprite = scenario.varnishLayerSprite;
-            }
+            varnishCanvas.SetSprite(scenario.varnishLayerSprite);
+            Debug.Log($"ScenarioManager: Set varnishCanvas sprite to '{scenario.varnishLayerSprite.name}'");
         }
     }
     
