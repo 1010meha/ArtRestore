@@ -19,7 +19,7 @@ public class ScenarioSetupHelper : MonoBehaviour
             return;
         }
         
-        var scenarioManager = FindFirstObjectByType<ScenarioManager>();
+        var scenarioManager = FindObjectOfType<ScenarioManager>();
         if (scenarioManager != null)
         {
             scenarioManager.LoadScenario(scenarioToLoad);

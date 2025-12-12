@@ -95,11 +95,11 @@ public class BeakerManager : MonoBehaviour
     
     private void NotifyVarnishApplied()
     {
-        var progressTracker = FindFirstObjectByType<ScenarioProgressTracker>();
+        var progressTracker = FindObjectOfType<ScenarioProgressTracker>();
         if (progressTracker != null)
         {
             // Check if correct concentration was used
-            var scenarioManager = FindFirstObjectByType<ScenarioManager>();
+            var scenarioManager = FindObjectOfType<ScenarioManager>();
             if (scenarioManager != null && scenarioManager.CurrentScenario != null)
             {
                 var scenario = scenarioManager.CurrentScenario;

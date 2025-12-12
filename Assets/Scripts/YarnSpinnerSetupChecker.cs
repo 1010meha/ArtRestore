@@ -1,5 +1,6 @@
 using UnityEngine;
 using Yarn.Unity;
+using System.Reflection;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -24,57 +25,88 @@ public class YarnSpinnerSetupChecker : MonoBehaviour
         
         bool allGood = true;
         
-        // Check YarnProject
-        if (dialogueRunner.yarnProject == null)
+        // Check YarnProject using reflection to avoid API version issues
+        #if UNITY_EDITOR
+        try
         {
-            Debug.LogError("YarnSpinnerSetupChecker: ❌ DialogueRunner has no YarnProject assigned!");
-            Debug.LogError("   → Go to DialogueRunner component and assign a YarnProject asset");
-            allGood = false;
-        }
-        else
-        {
-            Debug.Log($"YarnSpinnerSetupChecker: ✅ YarnProject assigned: {dialogueRunner.yarnProject.name}");
-            
-            // Check if YarnProject has source files
-            #if UNITY_EDITOR
-            try
+            var yarnProjectProperty = typeof(DialogueRunner).GetProperty("yarnProject");
+            if (yarnProjectProperty != null)
             {
-                var project = dialogueRunner.yarnProject;
-                var path = AssetDatabase.GetAssetPath(project);
-                if (!string.IsNullOrEmpty(path))
+                var yarnProject = yarnProjectProperty.GetValue(dialogueRunner);
+                if (yarnProject == null)
                 {
-                    var importer = AssetImporter.GetAtPath(path);
-                    if (importer != null)
+                    Debug.LogError("YarnSpinnerSetupChecker: ❌ DialogueRunner has no YarnProject assigned!");
+                    Debug.LogError("   → Go to DialogueRunner component and assign a YarnProject asset");
+                    allGood = false;
+                }
+                else
+                {
+                    var nameProperty = yarnProject.GetType().GetProperty("name");
+                    if (nameProperty != null)
                     {
-                        Debug.Log($"YarnSpinnerSetupChecker: ✅ YarnProject found at: {path}");
+                        Debug.Log($"YarnSpinnerSetupChecker: ✅ YarnProject assigned: {nameProperty.GetValue(yarnProject)}");
+                    }
+                    else
+                    {
+                        Debug.Log("YarnSpinnerSetupChecker: ✅ YarnProject is assigned");
                     }
                 }
             }
-            catch (System.Exception e)
+            else
             {
-                Debug.LogWarning($"YarnSpinnerSetupChecker: Could not check YarnProject details: {e.Message}");
+                Debug.LogWarning("YarnSpinnerSetupChecker: Could not find 'yarnProject' property. YarnSpinner API may have changed.");
             }
-            #endif
         }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"YarnSpinnerSetupChecker: Could not check YarnProject: {e.Message}");
+        }
+        #else
+        Debug.Log("YarnSpinnerSetupChecker: DialogueRunner assigned. Use Editor mode for detailed checks.");
+        #endif
         
         // Check VariableStorage
-        if (dialogueRunner.variableStorage == null)
+        try
         {
-            Debug.LogWarning("YarnSpinnerSetupChecker: ⚠️ DialogueRunner has no VariableStorage assigned (optional but recommended)");
+            var variableStorageProperty = typeof(DialogueRunner).GetProperty("variableStorage");
+            if (variableStorageProperty != null)
+            {
+                var variableStorage = variableStorageProperty.GetValue(dialogueRunner);
+                if (variableStorage == null)
+                {
+                    Debug.LogWarning("YarnSpinnerSetupChecker: ⚠️ DialogueRunner has no VariableStorage assigned (optional but recommended)");
+                }
+                else
+                {
+                    Debug.Log($"YarnSpinnerSetupChecker: ✅ VariableStorage assigned: {variableStorage.GetType().Name}");
+                }
+            }
         }
-        else
+        catch (System.Exception e)
         {
-            Debug.Log($"YarnSpinnerSetupChecker: ✅ VariableStorage assigned: {dialogueRunner.variableStorage.GetType().Name}");
+            Debug.LogWarning($"YarnSpinnerSetupChecker: Could not check VariableStorage: {e.Message}");
         }
         
         // Check DialogueUI
-        if (dialogueRunner.dialogueUI == null)
+        try
         {
-            Debug.LogWarning("YarnSpinnerSetupChecker: ⚠️ DialogueRunner has no DialogueUI assigned");
+            var dialogueUIProperty = typeof(DialogueRunner).GetProperty("dialogueUI");
+            if (dialogueUIProperty != null)
+            {
+                var dialogueUI = dialogueUIProperty.GetValue(dialogueRunner);
+                if (dialogueUI == null)
+                {
+                    Debug.LogWarning("YarnSpinnerSetupChecker: ⚠️ DialogueRunner has no DialogueUI assigned");
+                }
+                else
+                {
+                    Debug.Log($"YarnSpinnerSetupChecker: ✅ DialogueUI assigned: {dialogueUI.GetType().Name}");
+                }
+            }
         }
-        else
+        catch (System.Exception e)
         {
-            Debug.Log($"YarnSpinnerSetupChecker: ✅ DialogueUI assigned: {dialogueRunner.dialogueUI.GetType().Name}");
+            Debug.LogWarning($"YarnSpinnerSetupChecker: Could not check DialogueUI: {e.Message}");
         }
         
         if (allGood)
@@ -86,13 +118,38 @@ public class YarnSpinnerSetupChecker : MonoBehaviour
     [ContextMenu("List All Available Nodes")]
     public void ListNodes()
     {
-        if (dialogueRunner == null || dialogueRunner.yarnProject == null)
+        if (dialogueRunner == null)
         {
-            Debug.LogError("YarnSpinnerSetupChecker: DialogueRunner or YarnProject not assigned!");
+            Debug.LogError("YarnSpinnerSetupChecker: DialogueRunner not assigned!");
             return;
         }
         
-        Debug.Log($"YarnSpinnerSetupChecker: YarnProject is '{dialogueRunner.yarnProject.name}'");
+        #if UNITY_EDITOR
+        try
+        {
+            var yarnProjectProperty = typeof(DialogueRunner).GetProperty("yarnProject");
+            if (yarnProjectProperty != null)
+            {
+                var yarnProject = yarnProjectProperty.GetValue(dialogueRunner);
+                if (yarnProject == null)
+                {
+                    Debug.LogError("YarnSpinnerSetupChecker: YarnProject not assigned!");
+                    return;
+                }
+                
+                var nameProperty = yarnProject.GetType().GetProperty("name");
+                if (nameProperty != null)
+                {
+                    Debug.Log($"YarnSpinnerSetupChecker: YarnProject is '{nameProperty.GetValue(yarnProject)}'");
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"YarnSpinnerSetupChecker: Could not get YarnProject: {e.Message}");
+        }
+        #endif
+        
         Debug.Log("To see available nodes, check the YarnProject asset in the Inspector or try starting a dialogue node.");
         Debug.Log("If you get 'node not found' errors, check that your .yarn files are included in the YarnProject's source files.");
     }

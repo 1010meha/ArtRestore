@@ -41,7 +41,7 @@ public class PuzzleManager : MonoBehaviour
         gameObject.SetActive(false);
         
         // Notify progress tracker if it exists
-        var progressTracker = FindFirstObjectByType<ScenarioProgressTracker>();
+        var progressTracker = FindObjectOfType<ScenarioProgressTracker>();
         if (progressTracker != null)
         {
             progressTracker.MarkPuzzleCompleted();
