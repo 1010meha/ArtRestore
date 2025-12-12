@@ -108,7 +108,11 @@ Add these components to your scene:
 2. Create Yarn file: `FirstClient.yarn`
    - Node "Start": Client greeting
    - Node "Completion": Client thanks
-3. Add to ScenarioManager's queue or load manually
+3. **IMPORTANT**: Make sure your DialogueRunner has the YarnProject assigned!
+   - Select the DialogueRunner GameObject
+   - In Inspector, assign the YarnProject (e.g., `ArtRestoreYarnSpin`)
+   - The YarnProject should include your `.yarn` files
+4. Add to ScenarioManager's queue or load manually
 
 The system will automatically:
 - Load the painting
@@ -116,4 +120,35 @@ The system will automatically:
 - Show completion button when done
 - Play completion dialogue
 - Load next scenario
+
+## Troubleshooting
+
+### "Cannot load node Start: No nodes have been loaded"
+
+This means YarnSpinner hasn't loaded the dialogue files. Fix:
+
+1. **Check DialogueRunner Setup:**
+   - Select the GameObject with DialogueRunner component
+   - In Inspector, make sure "Yarn Project" field is assigned
+   - It should point to your YarnProject asset (e.g., `ArtRestoreYarnSpin`)
+
+2. **Check YarnProject:**
+   - Select the YarnProject asset in Project window
+   - In Inspector, check "Source Files" - your `.yarn` files should be listed
+   - If not, click "Add" and select your `.yarn` files
+
+3. **Check for Compilation Errors:**
+   - Look in Unity Console for YarnSpinner compilation errors
+   - Fix any syntax errors in your `.yarn` files
+
+4. **Use Setup Checker:**
+   - Add `YarnSpinnerSetupChecker` component to a GameObject
+   - Right-click component → "Check YarnSpinner Setup"
+   - This will tell you what's missing
+
+### Dialogue doesn't start
+
+- Check that the node name in your Scenario matches exactly (case-sensitive)
+- Use `YarnSpinnerSetupChecker` → "List All Available Nodes" to see valid node names
+- Make sure DialogueUI is assigned to DialogueRunner
 

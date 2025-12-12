@@ -89,7 +89,7 @@ public class ScenarioManager : MonoBehaviour
         // Start dialogue
         if (dialogueRunner != null && !string.IsNullOrEmpty(scenario.dialogueStartNode))
         {
-            dialogueRunner.StartDialogue(scenario.dialogueStartNode);
+            StartDialogueSafely(scenario.dialogueStartNode);
         }
         
         // Hide completion button
@@ -183,7 +183,7 @@ public class ScenarioManager : MonoBehaviour
         // Play completion dialogue
         if (dialogueRunner != null && !string.IsNullOrEmpty(currentScenario.completionDialogueNode))
         {
-            dialogueRunner.StartDialogue(currentScenario.completionDialogueNode);
+            StartDialogueSafely(currentScenario.completionDialogueNode);
         }
         
         // Load next scenario or end
@@ -225,6 +225,64 @@ public class ScenarioManager : MonoBehaviour
         if (completionButton != null)
         {
             completionButton.SetActive(canComplete);
+        }
+    }
+    
+    /// <summary>
+    /// Safely start dialogue, checking if DialogueRunner is ready and node exists
+    /// </summary>
+    private void StartDialogueSafely(string nodeName)
+    {
+        if (dialogueRunner == null)
+        {
+            Debug.LogWarning("ScenarioManager: DialogueRunner is not assigned!");
+            return;
+        }
+        
+        // Check if DialogueRunner has a YarnProject assigned
+        if (dialogueRunner.yarnProject == null)
+        {
+            Debug.LogWarning("ScenarioManager: DialogueRunner has no YarnProject assigned! Please assign a YarnProject in the Inspector.");
+            return;
+        }
+        
+        // Wait a frame to ensure YarnProject is loaded (if needed)
+        StartCoroutine(StartDialogueWhenReady(nodeName));
+    }
+    
+    private IEnumerator StartDialogueWhenReady(string nodeName)
+    {
+        // Wait a frame to ensure everything is initialized
+        yield return null;
+        
+        // Check if dialogue runner is ready
+        if (dialogueRunner == null || dialogueRunner.yarnProject == null)
+        {
+            Debug.LogError("ScenarioManager: DialogueRunner is not properly initialized!");
+            yield break;
+        }
+        
+        // Try to start dialogue with error handling
+        try
+        {
+            // Check if runner is already running dialogue
+            if (dialogueRunner.IsDialogueRunning)
+            {
+                Debug.LogWarning($"ScenarioManager: Dialogue is already running. Stopping current dialogue to start '{nodeName}'");
+                dialogueRunner.Stop();
+                yield return null;
+            }
+            
+            dialogueRunner.StartDialogue(nodeName);
+            Debug.Log($"ScenarioManager: Started dialogue node '{nodeName}'");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"ScenarioManager: Error starting dialogue node '{nodeName}': {e.Message}\n" +
+                          $"Make sure:\n" +
+                          $"1. YarnProject is assigned to DialogueRunner\n" +
+                          $"2. The YarnProject includes a .yarn file with node '{nodeName}'\n" +
+                          $"3. The YarnProject has been compiled (check Console for errors)");
         }
     }
     
