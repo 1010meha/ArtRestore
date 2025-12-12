@@ -65,4 +65,3 @@ public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 }
-}
