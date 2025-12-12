@@ -2,31 +2,33 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.Rendering.DebugUI;
-using System;
 
 public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    public SpriteRenderer palleteSR;
+    [Header("Color Settings")]
+    public SpriteRenderer paletteSR;
     public Color colorSelect;
+    public float colorAdjustmentAmount;
+
+    private const float MAX_MOUSE_DISTANCE = 1000f;
+    private const float MIN_COLOR_MIX = 0.9f;
+    private const float MAX_COLOR_MIX = 0.999f;
+
     private bool isHolding = false;
     private float mouseStartPos;
-    public float amtToAdjustColor;
 
     private void Start()
     {
         colorSelect = GetComponent<Image>().color;
     }
+
     public void OnPointerDown(PointerEventData pointerEventData)
     {
         mouseStartPos = Input.mousePosition.x;
         isHolding = true;
         StartCoroutine(DetectHold());
-
     }
 
-    //Detect if clicks are no longer registering
     public void OnPointerUp(PointerEventData pointerEventData)
     {
         isHolding = false;
@@ -37,36 +39,30 @@ public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         while (isHolding)
         {
-           
+            // Normalize the input value to a 0-1 range based on mouse movement
+            float mouseDistance = Mathf.Abs(mouseStartPos - Input.mousePosition.x);
+            float t = Mathf.InverseLerp(0f, MAX_MOUSE_DISTANCE, mouseDistance);
 
-            // Normalize the input value to a 0-1 range
-            float t = Mathf.InverseLerp(0 , 1000f, Mathf.Abs(mouseStartPos - Input.mousePosition.x));
-
-            // Linearly interpolate the 0-1 value to the output range
-             amtToAdjustColor = Mathf.Lerp(.999f, .9f, t);
-
-                AdjustColor(amtToAdjustColor);
-            yield return null; // Wait for the next frame
+            // Linearly interpolate the color mix amount
+            colorAdjustmentAmount = Mathf.Lerp(MAX_COLOR_MIX, MIN_COLOR_MIX, t);
+            AdjustColor(colorAdjustmentAmount);
+            
+            yield return null;
         }
     }
 
-    private void Update()
+    private void AdjustColor(float percentChange)
     {
-        
-    }
-
-    void AdjustColor(float percentChange)
-    {
-        Color palleteColor = palleteSR.color;
-        if (palleteColor == Color.white)
+        Color paletteColor = paletteSR.color;
+        if (paletteColor == Color.white)
         {
-            palleteSR.color = colorSelect;
+            paletteSR.color = colorSelect;
         }
         else
         {
-            Color averageColor = Color.Lerp(colorSelect, palleteColor, percentChange);
-            Color daColor = averageColor;
-            palleteSR.color = daColor;
+            Color mixedColor = Color.Lerp(colorSelect, paletteColor, percentChange);
+            paletteSR.color = mixedColor;
         }
     }
+}
 }

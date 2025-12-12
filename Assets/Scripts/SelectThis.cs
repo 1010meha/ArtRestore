@@ -1,62 +1,41 @@
-using UnityEditor;
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 public class SelectThis : MonoBehaviour
 {
-    [SerializeField] SwitchTools.Tools toolType;
-    void OnMouseDown()
+    [SerializeField] private SwitchTools.Tools toolType;
+    
+    private static Dictionary<SwitchTools.Tools, Action> toolActions;
+    
+    private void Awake()
     {
-
-            switch (toolType)
-            {
-                case (SwitchTools.Tools.UseGesso):
-                {
-                    SwitchTools.Instance.UseGesso();
-                    break;
-                }
-                case (SwitchTools.Tools.RemoveGesso):
-                    {
-                        SwitchTools.Instance.RemoveGesso();
-                        break;
-                    }
-                case (SwitchTools.Tools.UsePaint):
-                    {
-                        SwitchTools.Instance.UsePaint();
-                        break;
-                    }
-                case (SwitchTools.Tools.UseVarnishRemover):
-                    {
-                        SwitchTools.Instance.UseVarnishRemover();
-                        break;
-                    }
-                case (SwitchTools.Tools.VisibleLight):
-                {
-                    SwitchTools.Instance.VisibleLight();
-                    break;
-                }
-                case (SwitchTools.Tools.UVLight):
-                    {
-                        SwitchTools.Instance.UVLight();
-                        break;
-                    }
-                case (SwitchTools.Tools.InfraredLight):
-                    {
-                        SwitchTools.Instance.InfraredLight();
-                        break;
-                    }
-                case (SwitchTools.Tools.VarnishSetup):
-                    {
-                        SwitchTools.Instance.GoToVarnishSetup();
-                        break;
-                    }
-
-                default:
-                        {
-                            break;
-                        }
-            }
-            
+        if (toolActions == null)
+        {
+            InitializeToolActions();
+        }
     }
-        
-        
+    
+    private static void InitializeToolActions()
+    {
+        toolActions = new Dictionary<SwitchTools.Tools, Action>
+        {
+            { SwitchTools.Tools.UseGesso, () => SwitchTools.Instance?.UseGesso() },
+            { SwitchTools.Tools.RemoveGesso, () => SwitchTools.Instance?.RemoveGesso() },
+            { SwitchTools.Tools.UsePaint, () => SwitchTools.Instance?.UsePaint() },
+            { SwitchTools.Tools.UseVarnishRemover, () => SwitchTools.Instance?.UseVarnishRemover() },
+            { SwitchTools.Tools.VisibleLight, () => SwitchTools.Instance?.VisibleLight() },
+            { SwitchTools.Tools.UVLight, () => SwitchTools.Instance?.UVLight() },
+            { SwitchTools.Tools.InfraredLight, () => SwitchTools.Instance?.InfraredLight() },
+            { SwitchTools.Tools.VarnishSetup, () => SwitchTools.Instance?.GoToVarnishSetup() }
+        };
+    }
+    
+    private void OnMouseDown()
+    {
+        if (toolActions != null && toolActions.TryGetValue(toolType, out Action action))
+        {
+            action?.Invoke();
+        }
+    }
 }

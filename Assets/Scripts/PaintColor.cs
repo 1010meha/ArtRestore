@@ -4,28 +4,36 @@ public class PaintColor : MonoBehaviour
 {
     private Texture2D m_Texture;
     private Color[] m_Colors;
-    public Color colorToIgnore;
+    
+    [Header("Paint Settings")]
     public SpriteRenderer paint;
     public Color paintColor;
-    RaycastHit2D hit;
-    SpriteRenderer spriteRend;
-    Color zeroAlpha = Color.red;
-    public int erSize;
-    public Vector2Int lastPos;
-    public bool Drawing = false;
+    public int brushSize;
+    
+    private const float MIN_ALPHA_TO_PAINT = 0.5f;
+
+    private RaycastHit2D hit;
+    private Vector2Int lastPos;
+    public bool Drawing { get; private set; } = false;
     private CanvasManager canvas;
+    private Camera mainCamera;
+
+    private void Awake()
+    {
+        mainCamera = Camera.main;
+    }
 
     void Start()
     {
         canvas = GetComponent<CanvasManager>();
         m_Texture = canvas.texture;
         m_Colors = canvas.colors;
-        spriteRend = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        Vector2 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (mainCamera == null) mainCamera = Camera.main;
+        Vector2 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -36,7 +44,7 @@ public class PaintColor : MonoBehaviour
                 if (h.collider != null && h.collider.gameObject == gameObject)
                 {
                     hit = h;
-                    paintColor = paint.color;
+                    if (paint != null) paintColor = paint.color;
                     UpdateTexture();
                     Drawing = true;
                     break; // found ourselves
@@ -47,11 +55,12 @@ public class PaintColor : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             Drawing = false;
+            return;
         }
 
         if (Drawing)
         {
-            //  Update while dragging
+            // Update while dragging - only raycast when actually drawing
             var hits = Physics2D.RaycastAll(mouseWorld, Vector2.zero);
             bool overThis = false;
             foreach (var h in hits)
@@ -77,14 +86,17 @@ public class PaintColor : MonoBehaviour
         mousePos.x *= w / hit.collider.bounds.size.x;
         mousePos.y *= h / hit.collider.bounds.size.y;
         Vector2Int p = new Vector2Int((int)mousePos.x, (int)mousePos.y);
-        Vector2Int start = new Vector2Int();
-        Vector2Int end = new Vector2Int();
         if (!Drawing)
             lastPos = p;
-        start.x = Mathf.Clamp(Mathf.Min(p.x, lastPos.x) - erSize, 0, w);
-        start.y = Mathf.Clamp(Mathf.Min(p.y, lastPos.y) - erSize, 0, h);
-        end.x = Mathf.Clamp(Mathf.Max(p.x, lastPos.x) + erSize, 0, w);
-        end.y = Mathf.Clamp(Mathf.Max(p.y, lastPos.y) + erSize, 0, h);
+            
+        Vector2Int start = new Vector2Int(
+            Mathf.Clamp(Mathf.Min(p.x, lastPos.x) - brushSize, 0, w),
+            Mathf.Clamp(Mathf.Min(p.y, lastPos.y) - brushSize, 0, h)
+        );
+        Vector2Int end = new Vector2Int(
+            Mathf.Clamp(Mathf.Max(p.x, lastPos.x) + brushSize, 0, w),
+            Mathf.Clamp(Mathf.Max(p.y, lastPos.y) + brushSize, 0, h)
+        );
         Vector2 dir = p - lastPos;
         for (int x = start.x; x < end.x; x++)
         {
@@ -98,9 +110,12 @@ public class PaintColor : MonoBehaviour
                     d = Mathf.Clamp01(d);
                     linePos = Vector2.Lerp(lastPos, p, d);
                 }
-                if ((pixel - linePos).sqrMagnitude <= erSize * erSize)
+                if ((pixel - linePos).sqrMagnitude <= brushSize * brushSize)
                 {
-                    if (m_Colors[x + y * w].a > 0.5f) { m_Colors[x + y * w] = paintColor; }
+                    if (m_Colors[x + y * w].a > MIN_ALPHA_TO_PAINT)
+                    {
+                        m_Colors[x + y * w] = paintColor;
+                    }
                 }
             }
         }

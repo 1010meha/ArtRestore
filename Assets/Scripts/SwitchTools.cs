@@ -1,125 +1,164 @@
-using System;
 using UnityEngine;
 
 public class SwitchTools : MonoBehaviour
 {
+    [Header("Painting Tools")]
     public Gesso crackGesso;
     public Gesso overGesso;
     public RemoveVarnish removeVarnish;
     public RemovePigment removeGesso;
     public PaintColor paintCrack;
-    public GameObject FluorecentCrack;
+    
+    [Header("Lighting Views")]
+    public GameObject FluorecentCrack; // Note: Keeping original name for Unity serialization
     public GameObject UVPainting;
     public GameObject UnderPainting;
+    
+    [Header("UI Elements")]
     public GameObject varnishSetup;
     public GameObject buttons;
     public GameObject paintingParent;
     public GameObject brushSize;
-    private float ogMousePosition;
 
-    public static SwitchTools Instance;
+    public static SwitchTools Instance { get; private set; }
 
-    public enum Tools { UseGesso, RemoveGesso, UsePaint, UseVarnishRemover, VisibleLight, UVLight, InfraredLight, VarnishSetup }
-    void Start()
+    public enum Tools 
+    { 
+        UseGesso, 
+        RemoveGesso, 
+        UsePaint, 
+        UseVarnishRemover, 
+        VisibleLight, 
+        UVLight, 
+        InfraredLight, 
+        VarnishSetup 
+    }
+    
+    private const float MAX_MOUSE_DISTANCE = 500f;
+    private const float MIN_BRUSH_SIZE = 5f;
+    private const float MAX_BRUSH_SIZE = 50f;
+    
+    private float originalMousePosition;
+    private ChangeBrushSize brushSizeComponent;
+
+    private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
         }
         else
         {
-            Destroy(this);
-        }       
+            Destroy(gameObject);
+            return;
+        }
+    }
+    
+    private void Start()
+    {
         SetAllToFalse();
-
+        if (brushSize != null)
+        {
+            brushSizeComponent = brushSize.GetComponent<ChangeBrushSize>();
+        }
     }
 
     public void SetAllToFalse()
     {
-        crackGesso.enabled = false;
-        overGesso.enabled = false;
-        removeVarnish.enabled = false;
-        removeGesso.enabled = false;
-        paintCrack.enabled = false;
-        FluorecentCrack.SetActive(false);
-        UVPainting.SetActive(false);
-        UnderPainting.SetActive(false);
-        varnishSetup.SetActive(false);
+        // Disable all painting tools
+        if (crackGesso != null) crackGesso.enabled = false;
+        if (overGesso != null) overGesso.enabled = false;
+        if (removeVarnish != null) removeVarnish.enabled = false;
+        if (removeGesso != null) removeGesso.enabled = false;
+        if (paintCrack != null) paintCrack.enabled = false;
+        
+        // Hide all lighting views
+        if (FluorecentCrack != null) FluorecentCrack.SetActive(false);
+        if (UVPainting != null) UVPainting.SetActive(false);
+        if (UnderPainting != null) UnderPainting.SetActive(false);
+        if (varnishSetup != null) varnishSetup.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
-        if (paintCrack.enabled)
+        HandleBrushSizeAdjustment();
+    }
+    
+    private void HandleBrushSizeAdjustment()
+    {
+        if (paintCrack == null || !paintCrack.enabled || brushSize == null)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            
-            if (Input.GetKeyDown(KeyCode.Mouse1))
+            originalMousePosition = Input.mousePosition.x;
+            brushSize.SetActive(true);
+            if (brushSizeComponent != null)
             {
-                ogMousePosition = Input.mousePosition.x;
-                brushSize.SetActive(true);
-                brushSize.GetComponent<ChangeBrushSize>().colorScript = paintCrack;
+                brushSizeComponent.colorScript = paintCrack;
             }
-            if (Input.GetKey(KeyCode.Mouse1))
-            {
-                float t = Mathf.InverseLerp(0, 500f, Mathf.Abs(ogMousePosition - Input.mousePosition.x));
-                paintCrack.erSize = Convert.ToInt32(Mathf.Lerp(5f, 50f, t));
-            }
-            if (Input.GetKeyUp(KeyCode.Mouse1))
-            {
-                brushSize.SetActive(false);
-            }
+        }
+        
+        if (Input.GetKey(KeyCode.Mouse1))
+        {
+            float mouseDistance = Mathf.Abs(originalMousePosition - Input.mousePosition.x);
+            float t = Mathf.InverseLerp(0f, MAX_MOUSE_DISTANCE, mouseDistance);
+            paintCrack.brushSize = Mathf.RoundToInt(Mathf.Lerp(MIN_BRUSH_SIZE, MAX_BRUSH_SIZE, t));
+        }
+        
+        if (Input.GetKeyUp(KeyCode.Mouse1))
+        {
+            brushSize.SetActive(false);
         }
     }
     public void UseGesso()
     {
         SetAllToFalse();
-        crackGesso.enabled = true;
-        overGesso.enabled = true;
-      
+        if (crackGesso != null) crackGesso.enabled = true;
+        if (overGesso != null) overGesso.enabled = true;
     }
 
     public void RemoveGesso()
     {
         SetAllToFalse();
-        removeGesso.enabled = true;
+        if (removeGesso != null) removeGesso.enabled = true;
     }
 
     public void UsePaint()
     {
         SetAllToFalse();
-        paintCrack.enabled = true;
+        if (paintCrack != null) paintCrack.enabled = true;
     }
 
     public void UseVarnishRemover()
     {
         SetAllToFalse();
-        removeVarnish.enabled = true;
-
+        if (removeVarnish != null) removeVarnish.enabled = true;
     }
 
     public void VisibleLight()
     {
         SetAllToFalse();
-        FluorecentCrack.SetActive(true);
+        if (FluorecentCrack != null) FluorecentCrack.SetActive(true);
     }
+    
     public void UVLight()
     {
         SetAllToFalse();
-        UVPainting.SetActive(true);
+        if (UVPainting != null) UVPainting.SetActive(true);
     }
+    
     public void InfraredLight()
     {
         SetAllToFalse();
-        UnderPainting.SetActive(true);
+        if (UnderPainting != null) UnderPainting.SetActive(true);
     }
 
     public void GoToVarnishSetup()
     {
         SetAllToFalse();
-        buttons.SetActive(false);
-        paintingParent.SetActive(false);
-        varnishSetup.SetActive(true);
-
+        if (buttons != null) buttons.SetActive(false);
+        if (paintingParent != null) paintingParent.SetActive(false);
+        if (varnishSetup != null) varnishSetup.SetActive(true);
     }
 }

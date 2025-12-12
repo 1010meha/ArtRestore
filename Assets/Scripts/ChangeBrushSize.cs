@@ -1,19 +1,27 @@
-using System;
 using UnityEngine;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 public class ChangeBrushSize : MonoBehaviour
 {
     public float radius;
     public PaintColor colorScript;
    
-    // Update is called once per frame
+    private const float MIN_BRUSH_SIZE = 5f;
+    private const float MAX_BRUSH_SIZE = 50f;
+    private const float MIN_SCALE = 0.05f;
+    private const float MAX_SCALE = 0.46f;
+    private int lastBrushSize = -1;
+
     void Update()
     {
+        if (colorScript == null) return;
 
-        float t = Mathf.InverseLerp(5, 50, colorScript.erSize);
-        radius = Mathf.Lerp(0.05f, 0.46f, t);
-        transform.localScale = new Vector3(radius, radius, radius);
-
+        // Only update if brush size changed
+        if (colorScript.brushSize != lastBrushSize)
+        {
+            lastBrushSize = colorScript.brushSize;
+            float t = Mathf.InverseLerp(MIN_BRUSH_SIZE, MAX_BRUSH_SIZE, colorScript.brushSize);
+            radius = Mathf.Lerp(MIN_SCALE, MAX_SCALE, t);
+            transform.localScale = new Vector3(radius, radius, radius);
+        }
     }
 }

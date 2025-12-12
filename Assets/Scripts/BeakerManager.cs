@@ -83,10 +83,10 @@ public class BeakerManager : MonoBehaviour
 
     private void OnMouseDown()
     {
-        
         buttons.SetActive(true);
         painting.SetActive(true);
-        varnishConc.redValue = new Color(((concentrationPercent / 100f)), 0f, 0f, 1f);
+        // Set threshold color based on concentration (red channel represents concentration)
+        varnishConc.thresholdColor = new Color((concentrationPercent / 100f), 0f, 0f, 1f);
         varnishSetup.SetActive(false);
     }
     public bool IsFull => isFull;

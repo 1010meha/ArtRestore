@@ -1,46 +1,66 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Gesso : MonoBehaviour
 {
     private Texture2D m_Texture;
     private Color[] m_Colors;
-    RaycastHit2D hit;
-    SpriteRenderer spriteRend;
-    public int erSize = 5;
-    public Vector2Int lastPos;
-    public bool Drawing = false;
-    private bool isMouseDown = false;
-    public float alphaMin;
+    private RaycastHit2D hit;
+    
+    [Header("Brush Settings")]
+    public int brushSize = 5;
+    
+    [Header("Gesso Settings")]
+    private const float ALPHA_INCREMENT = 0.1f;
+    private const float INITIAL_ALPHA = 0.1f;
+    private const float TRANSPARENT_THRESHOLD = 0.01f;
+    private const float WHITE_VALUE = 1f;
 
+    private Vector2Int lastPos;
+    public bool Drawing { get; private set; } = false;
+    private bool isMouseDown = false;
     private CanvasManager canvas;
+    private Camera mainCamera;
+
+    private void Awake()
+    {
+        mainCamera = Camera.main;
+    }
 
     void Start()
     {
         canvas = GetComponent<CanvasManager>();
         m_Texture = canvas.texture;
         m_Colors = canvas.colors;
-        spriteRend = GetComponent<SpriteRenderer>();
     }
-
-
 
     void Update()
     {
-        Vector2 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        // Early return if mouse is not down
+        if (!isMouseDown)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                isMouseDown = true;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            isMouseDown = false;
+            Drawing = false;
+            return;
+        }
+
+        // Only raycast when mouse is down
+        if (mainCamera == null) mainCamera = Camera.main;
+        Vector2 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         var hits = Physics2D.RaycastAll(mouseWorld, Vector2.zero);
 
-        bool mouseDown = Input.GetMouseButton(0);
         bool mouseDownStart = Input.GetMouseButtonDown(0);
-        bool mouseDownEnd = Input.GetMouseButtonUp(0);
-
-        if (mouseDownStart)
-            isMouseDown = true;
-        if (mouseDownEnd)
-            isMouseDown = false;
-
-        if (!isMouseDown)
-            return;
 
         // Loop through ALL hits under the mouse
         foreach (var h in hits)
@@ -73,13 +93,13 @@ public class Gesso : MonoBehaviour
             lastPos = p;
 
         Vector2Int start = new Vector2Int(
-            Mathf.Clamp(Mathf.Min(p.x, lastPos.x) - erSize, 0, w),
-            Mathf.Clamp(Mathf.Min(p.y, lastPos.y) - erSize, 0, h)
+            Mathf.Clamp(Mathf.Min(p.x, lastPos.x) - brushSize, 0, w),
+            Mathf.Clamp(Mathf.Min(p.y, lastPos.y) - brushSize, 0, h)
         );
 
         Vector2Int end = new Vector2Int(
-            Mathf.Clamp(Mathf.Max(p.x, lastPos.x) + erSize, 0, w),
-            Mathf.Clamp(Mathf.Max(p.y, lastPos.y) + erSize, 0, h)
+            Mathf.Clamp(Mathf.Max(p.x, lastPos.x) + brushSize, 0, w),
+            Mathf.Clamp(Mathf.Max(p.y, lastPos.y) + brushSize, 0, h)
         );
 
         Vector2 dir = p - lastPos;
@@ -97,21 +117,20 @@ public class Gesso : MonoBehaviour
                     linePos = Vector2.Lerp(lastPos, p, d);
                 }
 
-                if ((pixel - linePos).sqrMagnitude <= erSize * erSize)
+                if ((pixel - linePos).sqrMagnitude <= brushSize * brushSize)
                 {
                     Color current = m_Colors[x + y * w];
-                    float newAlpha = Mathf.Clamp01(current.a + 0.1f);
+                    float newAlpha = Mathf.Clamp01(current.a + ALPHA_INCREMENT);
 
                     // If pixel was fully transparent, reinitialize its color
-                    if (current.a <= 0.01f)
+                    if (current.a <= TRANSPARENT_THRESHOLD)
                     {
-                        m_Colors[x + y * w] = new Color(1f, 1f, 1f, 0.1f);
+                        m_Colors[x + y * w] = new Color(WHITE_VALUE, WHITE_VALUE, WHITE_VALUE, INITIAL_ALPHA);
                     }
                     else
                     {
-                        m_Colors[x + y * w] = new Color(1f, 1f, 1f, newAlpha);
+                        m_Colors[x + y * w] = new Color(WHITE_VALUE, WHITE_VALUE, WHITE_VALUE, newAlpha);
                     }
-
                 }
 
             }
