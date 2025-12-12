@@ -2,6 +2,7 @@ using UnityEngine;
 using Yarn.Unity;
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 
 /// <summary>
 /// Manages the flow of restoration scenarios, loading clients and their paintings
@@ -239,8 +240,18 @@ public class ScenarioManager : MonoBehaviour
             return;
         }
         
-        // Check if DialogueRunner has a YarnProject assigned
-        if (dialogueRunner.yarnProject == null)
+        // Check if DialogueRunner has a YarnProject assigned using reflection
+        var yarnProjectProperty = typeof(DialogueRunner).GetProperty("yarnProject");
+        if (yarnProjectProperty == null)
+        {
+            Debug.LogWarning("ScenarioManager: Could not find 'yarnProject' property. YarnSpinner API may have changed.");
+            // Try to start dialogue anyway - it might work
+            StartCoroutine(StartDialogueWhenReady(nodeName));
+            return;
+        }
+        
+        var yarnProject = yarnProjectProperty.GetValue(dialogueRunner);
+        if (yarnProject == null)
         {
             Debug.LogWarning("ScenarioManager: DialogueRunner has no YarnProject assigned! Please assign a YarnProject in the Inspector.");
             return;
@@ -256,29 +267,68 @@ public class ScenarioManager : MonoBehaviour
         yield return null;
         
         // Check if dialogue runner is ready
-        if (dialogueRunner == null || dialogueRunner.yarnProject == null)
+        if (dialogueRunner == null)
         {
-            Debug.LogError("ScenarioManager: DialogueRunner is not properly initialized!");
+            Debug.LogError("ScenarioManager: DialogueRunner is null!");
             yield break;
         }
         
-        // Try to start dialogue with error handling
-        try
+        // Check YarnProject using reflection
+        var yarnProjectProperty = typeof(DialogueRunner).GetProperty("yarnProject");
+        if (yarnProjectProperty != null)
         {
-            // Check if runner is already running dialogue
-            if (dialogueRunner.IsDialogueRunning)
+            var yarnProject = yarnProjectProperty.GetValue(dialogueRunner);
+            if (yarnProject == null)
+            {
+                Debug.LogError("ScenarioManager: DialogueRunner has no YarnProject assigned!");
+                yield break;
+            }
+        }
+        
+        // Start dialogue with error handling
+        bool dialogueStarted = false;
+        System.Exception caughtException = null;
+        
+        // Check if runner is already running dialogue
+        var isRunningProperty = typeof(DialogueRunner).GetProperty("IsDialogueRunning");
+        if (isRunningProperty != null)
+        {
+            bool isRunning = (bool)isRunningProperty.GetValue(dialogueRunner);
+            if (isRunning)
             {
                 Debug.LogWarning($"ScenarioManager: Dialogue is already running. Stopping current dialogue to start '{nodeName}'");
-                dialogueRunner.Stop();
+                var stopMethod = typeof(DialogueRunner).GetMethod("Stop");
+                if (stopMethod != null)
+                {
+                    stopMethod.Invoke(dialogueRunner, null);
+                }
                 yield return null;
             }
-            
-            dialogueRunner.StartDialogue(nodeName);
-            Debug.Log($"ScenarioManager: Started dialogue node '{nodeName}'");
+        }
+        
+        // Try to start dialogue
+        try
+        {
+            var startDialogueMethod = typeof(DialogueRunner).GetMethod("StartDialogue", new System.Type[] { typeof(string) });
+            if (startDialogueMethod != null)
+            {
+                startDialogueMethod.Invoke(dialogueRunner, new object[] { nodeName });
+                dialogueStarted = true;
+                Debug.Log($"ScenarioManager: Started dialogue node '{nodeName}'");
+            }
+            else
+            {
+                Debug.LogError("ScenarioManager: Could not find StartDialogue method!");
+            }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"ScenarioManager: Error starting dialogue node '{nodeName}': {e.Message}\n" +
+            caughtException = e;
+        }
+        
+        if (!dialogueStarted && caughtException != null)
+        {
+            Debug.LogError($"ScenarioManager: Error starting dialogue node '{nodeName}': {caughtException.Message}\n" +
                           $"Make sure:\n" +
                           $"1. YarnProject is assigned to DialogueRunner\n" +
                           $"2. The YarnProject includes a .yarn file with node '{nodeName}'\n" +
