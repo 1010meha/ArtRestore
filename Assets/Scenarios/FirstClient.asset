@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d94afd459bbb00f479d42ff704919624, type: 3}
+  m_Name: FirstClient
+  m_EditorClassIdentifier: 
+  clientName: Maragret
+  dialogueStartNode: Start
+  paintingSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
+  brokenPaintingSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
+  underpaintingSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
+  uvLayerSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
+  varnishLayerSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
+  requiresVarnishRemoval: 1
+  requiredVarnishConcentration: 0
+  requiresJigsawPuzzle: 0
+  jigsawPuzzlePrefab: {fileID: 0}
+  requiresGesso: 0
+  requiresRepainting: 0
+  targetPaintColors: []
+  completionDialogueNode: Completion
+  nextScenario: {fileID: 0}
