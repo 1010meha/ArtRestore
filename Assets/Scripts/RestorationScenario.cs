@@ -19,7 +19,13 @@ public class RestorationScenario : ScriptableObject
     [Header("Painting Setup")]
     [Tooltip("Main painting sprite to display")]
     public Sprite paintingSprite;
-    
+
+    [Tooltip("Varnish Readable Texture")]
+    public Sprite varnishREADSprite;
+
+    [Tooltip("Varnish layer texture")]
+    public Sprite varnishLayerSprite;
+
     [Tooltip("Broken/cracked version of the painting (for jigsaw puzzles)")]
     public Sprite brokenPaintingSprite;
     
@@ -28,10 +34,10 @@ public class RestorationScenario : ScriptableObject
     
     [Tooltip("UV layer (for UV view)")]
     public Sprite uvLayerSprite;
-    
-    [Tooltip("Varnish layer texture")]
-    public Sprite varnishLayerSprite;
-    
+
+    [Tooltip("Crack Sprite")]
+    public Sprite crackSprite;
+
     [Header("Restoration Steps Required")]
     [Tooltip("Does this painting need varnish removal?")]
     public bool requiresVarnishRemoval = false;

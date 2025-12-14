@@ -383,14 +383,17 @@ MonoBehaviour:
   dialogueRunner: {fileID: 1350224069}
   progressTracker: {fileID: 48033909}
   paintingDisplay: {fileID: 798101734}
-  paintingCanvas: {fileID: 1927291727}
+  paintingCanvas: {fileID: 798101735}
+  varnishREADCanvas: {fileID: 328751887}
   varnishCanvas: {fileID: 1420678198}
+  crackCanvas: {fileID: 1927291727}
   switchTools: {fileID: 48033907}
   beakerManager: {fileID: 2006692704}
   puzzleManager: {fileID: 2098039438}
   completionButton: {fileID: 1296494207}
   currentScenario: {fileID: 11400000, guid: 21f0afdbe784cae4e86a6a366d7520d3, type: 2}
-  scenarioQueue: []
+  scenarioQueue:
+  - {fileID: 11400000, guid: 21f0afdbe784cae4e86a6a366d7520d3, type: 2}
 --- !u!114 &48033911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2439,6 +2442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 798101733}
   - component: {fileID: 798101734}
+  - component: {fileID: 798101735}
   m_Layer: 0
   m_Name: PAINTING
   m_TagString: Untagged
@@ -2516,6 +2520,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &798101735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 798101732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8e12ebb87bd52a4d94e6800f75fec54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &840197191
 GameObject:
   m_ObjectHideFlags: 0
@@ -3127,8 +3143,8 @@ Transform:
   m_GameObject: {fileID: 1092986340}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.98, y: 0.09, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.15, y: 0.0731, z: 0}
+  m_LocalScale: {x: 1.55, y: 1.8458, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1512211473}
@@ -4383,8 +4399,8 @@ Transform:
   m_GameObject: {fileID: 1373243380}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.98, y: 0.09, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.2318, y: -0.0839, z: 0}
+  m_LocalScale: {x: 0.6966576, y: 0.776286, z: 0.36360002}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1512211473}
@@ -4437,8 +4453,8 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 8, y: 8}
+  m_DrawMode: 2
+  m_Size: {x: 18.74708, y: 19.46908}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -5113,6 +5129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1512211473}
   - component: {fileID: 1512211472}
+  - component: {fileID: 1512211474}
   m_Layer: 0
   m_Name: CrackMask
   m_TagString: Untagged
@@ -5192,6 +5209,18 @@ Transform:
   - {fileID: 1373243381}
   m_Father: {fileID: 1927291723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1512211474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512211471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d85c8d21dbe77d347a7d3d6f88e510e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1516968270
 GameObject:
   m_ObjectHideFlags: 0
@@ -7172,8 +7201,8 @@ Transform:
   m_GameObject: {fileID: 1927291719}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.4831386, y: -2.0684667, z: -0.017993033}
-  m_LocalScale: {x: 0.42036912, y: 0.41645208, z: 0.46083}
+  m_LocalPosition: {x: 0.08, y: -0.05, z: -0.017993033}
+  m_LocalScale: {x: 0.46296397, y: 0.46296397, z: 0.46296397}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1512211473}
@@ -7193,7 +7222,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paint: {fileID: 1776571099}
   paintColor: {r: 0, g: 0, b: 0, a: 0}
-  brushSize: 0
+  brushSize: 5
 --- !u!61 &1927291725
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7232,13 +7261,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 8, y: 8}
+    oldSize: {x: 12.28, y: 14.52}
     newSize: {x: 8, y: 8}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 8, y: 8}
+  m_Size: {x: 12.28, y: 14.52}
   m_EdgeRadius: 0
 --- !u!114 &1927291726
 MonoBehaviour:

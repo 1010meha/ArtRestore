@@ -21,10 +21,16 @@ public class ScenarioManager : MonoBehaviour
     
     [Tooltip("Canvas manager for the painting")]
     public CanvasManager paintingCanvas;
-    
+
+    [Tooltip("Varnish READ canvas")]
+    public CanvasManager varnishREADCanvas;
+
     [Tooltip("Varnish layer canvas")]
     public CanvasManager varnishCanvas;
-    
+
+    [Tooltip("Crack gameobj")]
+    public CanvasManager crackCanvas;
+
     [Tooltip("SwitchTools reference")]
     public SwitchTools switchTools;
     
@@ -129,6 +135,21 @@ public class ScenarioManager : MonoBehaviour
         {
             varnishCanvas.SetSprite(scenario.varnishLayerSprite);
             Debug.Log($"ScenarioManager: Set varnishCanvas sprite to '{scenario.varnishLayerSprite.name}'");
+        }
+
+        // Set up varnishREAD layer if provided
+        if (varnishREADCanvas != null && scenario.varnishREADSprite != null)
+        {
+            varnishREADCanvas.SetSprite(scenario.varnishREADSprite);
+            Debug.Log($"ScenarioManager: Set varnishREAD sprite to '{scenario.varnishREADSprite.name}'");
+        }
+
+        // Set up varnishREAD layer if provided
+        if (crackCanvas != null && scenario.crackSprite != null)
+        {
+            crackCanvas.SetSprite(scenario.crackSprite);
+            crackCanvas.gameObject.transform.GetChild(0).GetComponent<SpriteMask>().sprite = scenario.crackSprite;
+            Debug.Log($"ScenarioManager: Set varnishREAD sprite to '{scenario.varnishREADSprite.name}'");
         }
     }
     

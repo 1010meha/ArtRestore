@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clientName: Maragret
   dialogueStartNode: Start
-  paintingSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
-  brokenPaintingSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
-  underpaintingSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
-  uvLayerSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
-  varnishLayerSprite: {fileID: 4389077767562679060, guid: 9c44cb3962cd41c4b9e8a6cfb645b812, type: 3}
+  paintingSprite: {fileID: -9131534627094459373, guid: 90de491f853e83042a8ff02a381c303a, type: 3}
+  varnishREADSprite: {fileID: 4529406097138926229, guid: 41e78b9dc14c57b428702bfe6b3e4d1f, type: 3}
+  varnishLayerSprite: {fileID: 21300000, guid: e9a972ef884c40a49975d9afade26fb2, type: 3}
+  brokenPaintingSprite: {fileID: -9131534627094459373, guid: 90de491f853e83042a8ff02a381c303a, type: 3}
+  underpaintingSprite: {fileID: -9131534627094459373, guid: 90de491f853e83042a8ff02a381c303a, type: 3}
+  uvLayerSprite: {fileID: -9131534627094459373, guid: 90de491f853e83042a8ff02a381c303a, type: 3}
+  crackSprite: {fileID: -8963193903537908397, guid: 48734229c51073c4d964479528ffb1a0, type: 3}
   requiresVarnishRemoval: 1
   requiredVarnishConcentration: 0
   requiresJigsawPuzzle: 0

@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 9c44cb3962cd41c4b9e8a6cfb645b812
+guid: 48734229c51073c4d964479528ffb1a0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4389077767562679060
-    second: gessoStock_0
+      213: -8963193903537908397
+    second: crackB_0
+  - first:
+      213: 2500929268173097113
+    second: crackB_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +103,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: gessoStock_0
+      name: crackB_0
       rect:
         serializedVersion: 2
-        x: 736
-        y: 291
-        width: 1528
-        height: 2163
+        x: 62
+        y: 497
+        width: 512
+        height: 687
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 413532ba9f229ec30800000000000000
-      internalID: 4389077767562679060
+      spriteID: 3551dae32a65c9380800000000000000
+      internalID: -8963193903537908397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crackB_1
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 744
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 998c5dd3be515b220800000000000000
+      internalID: 2500929268173097113
       vertices: []
       indices: 
       edges: []
@@ -135,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      gessoStock_0: 4389077767562679060
+      crackB_0: -8963193903537908397
+      crackB_1: 2500929268173097113
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
