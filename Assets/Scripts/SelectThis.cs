@@ -5,7 +5,10 @@ using System.Collections.Generic;
 public class SelectThis : MonoBehaviour
 {
     [SerializeField] private SwitchTools.Tools toolType;
-    
+    [SerializeField] private Animator animator;
+    private ToolCursorController cursor;
+    private static readonly int HoverHash = Animator.StringToHash("Hovered");
+
     private static Dictionary<SwitchTools.Tools, Action> toolActions;
     
     private void Awake()
@@ -14,8 +17,11 @@ public class SelectThis : MonoBehaviour
         {
             InitializeToolActions();
         }
+        animator = GetComponent<Animator>();
+        cursor = FindAnyObjectByType<ToolCursorController>();
+
     }
-    
+
     private static void InitializeToolActions()
     {
         toolActions = new Dictionary<SwitchTools.Tools, Action>
@@ -38,4 +44,17 @@ public class SelectThis : MonoBehaviour
             action?.Invoke();
         }
     }
+
+    private void OnMouseEnter()
+    {
+        animator.SetBool("Hover",true);
+        cursor.SetToHover();
+    }
+
+    private void OnMouseExit()
+    {
+        animator.SetBool("Hover", false);
+        cursor.ResetHover();
+    }
+
 }

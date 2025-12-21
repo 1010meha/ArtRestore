@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SwitchTools : MonoBehaviour
@@ -20,10 +21,16 @@ public class SwitchTools : MonoBehaviour
     public GameObject paintingParent;
     public GameObject brushSize;
 
+    [Header("Tool Definitions")]
+    [SerializeField] private ToolDefinition[] tools;
+    [SerializeField] private ToolCursorController cursor;
+
+
     public static SwitchTools Instance { get; private set; }
 
     public enum Tools 
     { 
+        
         UseGesso, 
         RemoveGesso, 
         UsePaint, 
@@ -31,7 +38,8 @@ public class SwitchTools : MonoBehaviour
         VisibleLight, 
         UVLight, 
         InfraredLight, 
-        VarnishSetup 
+        VarnishSetup,
+            Select,
     }
     
     private const float MAX_MOUSE_DISTANCE = 500f;
@@ -40,12 +48,19 @@ public class SwitchTools : MonoBehaviour
     
     private float originalMousePosition;
     private ChangeBrushSize brushSizeComponent;
+    private Dictionary<Tools, ToolDefinition> toolLookup;
+
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            toolLookup = new Dictionary<Tools, ToolDefinition>();
+            foreach (var tool in tools)
+            {
+                toolLookup[tool.toolType] = tool;
+            }
         }
         else
         {
@@ -93,6 +108,13 @@ public class SwitchTools : MonoBehaviour
         {
             originalMousePosition = Input.mousePosition.x;
             brushSize.SetActive(true);
+            Camera cam = Camera.main;
+
+            Vector3 mouse = Input.mousePosition;
+            mouse.z = Mathf.Abs(cam.transform.position.z); // distance from camera to world plane
+
+            brushSize.transform.position = cam.ScreenToWorldPoint(mouse);
+
             if (brushSizeComponent != null)
             {
                 brushSizeComponent.colorScript = paintCrack;
@@ -111,47 +133,62 @@ public class SwitchTools : MonoBehaviour
             brushSize.SetActive(false);
         }
     }
+
+    private void ApplyTool(Tools toolType)
+    {
+        if (toolLookup.TryGetValue(toolType, out var tool))
+        {
+            cursor.ApplyTool(tool);
+        }
+    }
     public void UseGesso()
     {
         SetAllToFalse();
         if (crackGesso != null) crackGesso.enabled = true;
         if (overGesso != null) overGesso.enabled = true;
+        ApplyTool(Tools.UseGesso);
     }
 
     public void RemoveGesso()
     {
         SetAllToFalse();
         if (removeGesso != null) removeGesso.enabled = true;
+        ApplyTool(Tools.RemoveGesso);
     }
 
     public void UsePaint()
     {
         SetAllToFalse();
         if (paintCrack != null) paintCrack.enabled = true;
+        ApplyTool(Tools.UsePaint);
     }
 
     public void UseVarnishRemover()
     {
         SetAllToFalse();
         if (removeVarnish != null) removeVarnish.enabled = true;
+        ApplyTool(Tools.UseVarnishRemover);
     }
 
     public void VisibleLight()
     {
         SetAllToFalse();
         if (FluorecentCrack != null) FluorecentCrack.SetActive(true);
+        ApplyTool(Tools.VisibleLight);
     }
     
     public void UVLight()
     {
         SetAllToFalse();
         if (UVPainting != null) UVPainting.SetActive(true);
+        ApplyTool(Tools.UVLight);
     }
     
     public void InfraredLight()
     {
         SetAllToFalse();
         if (UnderPainting != null) UnderPainting.SetActive(true);
+        ApplyTool(Tools.InfraredLight);
     }
 
     public void GoToVarnishSetup()
@@ -160,5 +197,6 @@ public class SwitchTools : MonoBehaviour
         if (buttons != null) buttons.SetActive(false);
         if (paintingParent != null) paintingParent.SetActive(false);
         if (varnishSetup != null) varnishSetup.SetActive(true);
+        ApplyTool(Tools.VarnishSetup);
     }
 }

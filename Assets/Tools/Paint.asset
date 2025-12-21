@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 207948af5f1413448b73f452aea0e690, type: 3}
+  m_Name: Paint
+  m_EditorClassIdentifier: 
+  toolType: 2
+  cursorBody: {fileID: 3307147410765107459, guid: c558337ac4fbdff4fb2e72782231e8b3, type: 3}
+  cursorTip: {fileID: -3271155953621899875, guid: 2ce89e5023966d04ab6a809d956d193e, type: 3}
+  normalScale: 1
+  pressedScale: 0.6

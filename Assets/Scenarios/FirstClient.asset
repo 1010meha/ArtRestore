@@ -20,7 +20,7 @@ MonoBehaviour:
   brokenPaintingSprite: {fileID: -9131534627094459373, guid: 90de491f853e83042a8ff02a381c303a, type: 3}
   underpaintingSprite: {fileID: -9131534627094459373, guid: 90de491f853e83042a8ff02a381c303a, type: 3}
   uvLayerSprite: {fileID: -9131534627094459373, guid: 90de491f853e83042a8ff02a381c303a, type: 3}
-  crackSprite: {fileID: -8963193903537908397, guid: 48734229c51073c4d964479528ffb1a0, type: 3}
+  crackSprite: {fileID: 21300000, guid: 48734229c51073c4d964479528ffb1a0, type: 3}
   requiresVarnishRemoval: 1
   requiredVarnishConcentration: 0
   requiresJigsawPuzzle: 0

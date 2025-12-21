@@ -192,7 +192,9 @@ public class ScenarioManager : MonoBehaviour
         // Check if all steps are completed
         if (progressTracker != null && progressTracker.IsScenarioComplete())
         {
+            Debug.Log("Completed!");
             CompleteScenario();
+            
         }
         else
         {
@@ -208,6 +210,7 @@ public class ScenarioManager : MonoBehaviour
         // Play completion dialogue
         if (dialogueRunner != null && !string.IsNullOrEmpty(currentScenario.completionDialogueNode))
         {
+            Debug.Log("Completed2");
             StartDialogueSafely(currentScenario.completionDialogueNode);
         }
         
@@ -258,29 +261,7 @@ public class ScenarioManager : MonoBehaviour
     /// </summary>
     private void StartDialogueSafely(string nodeName)
     {
-        if (dialogueRunner == null)
-        {
-            Debug.LogWarning("ScenarioManager: DialogueRunner is not assigned!");
-            return;
-        }
-        
-        // Check if DialogueRunner has a YarnProject assigned using reflection
-        var yarnProjectProperty = typeof(DialogueRunner).GetProperty("yarnProject");
-        if (yarnProjectProperty == null)
-        {
-            Debug.LogWarning("ScenarioManager: Could not find 'yarnProject' property. YarnSpinner API may have changed.");
-            // Try to start dialogue anyway - it might work
-            StartCoroutine(StartDialogueWhenReady(nodeName));
-            return;
-        }
-        
-        var yarnProject = yarnProjectProperty.GetValue(dialogueRunner);
-        if (yarnProject == null)
-        {
-            Debug.LogWarning("ScenarioManager: DialogueRunner has no YarnProject assigned! Please assign a YarnProject in the Inspector.");
-            return;
-        }
-        
+            
         // Wait a frame to ensure YarnProject is loaded (if needed)
         StartCoroutine(StartDialogueWhenReady(nodeName));
     }

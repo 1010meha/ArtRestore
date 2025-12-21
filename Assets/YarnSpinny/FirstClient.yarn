@@ -4,7 +4,7 @@ Client: Hello! I'd like this painting restored!
 Player: Of course! Let me take a look at it.
 Client: This first painting simply needs some oil base to wipe some gunk off.
 Player: I'll get started right away!
-<<jump PaintingSetup>>
+//<<jump PaintingSetup>>
 ===
 
 title: PaintingSetup

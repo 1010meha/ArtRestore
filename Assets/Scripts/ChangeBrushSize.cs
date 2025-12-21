@@ -18,6 +18,7 @@ public class ChangeBrushSize : MonoBehaviour
         // Only update if brush size changed
         if (colorScript.brushSize != lastBrushSize)
         {
+           
             lastBrushSize = colorScript.brushSize;
             float t = Mathf.InverseLerp(MIN_BRUSH_SIZE, MAX_BRUSH_SIZE, colorScript.brushSize);
             radius = Mathf.Lerp(MIN_SCALE, MAX_SCALE, t);

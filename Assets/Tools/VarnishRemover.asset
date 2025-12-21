@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 207948af5f1413448b73f452aea0e690, type: 3}
+  m_Name: VarnishRemover
+  m_EditorClassIdentifier: 
+  toolType: 3
+  cursorBody: {fileID: 21300000, guid: 52bbed6569b265e4fa2cca292851764c, type: 3}
+  cursorTip: {fileID: 0}
+  normalScale: 1
+  pressedScale: 0.6

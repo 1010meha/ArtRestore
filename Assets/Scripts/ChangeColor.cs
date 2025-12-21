@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 
-public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Color Settings")]
     public SpriteRenderer paletteSR;
@@ -16,10 +16,11 @@ public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private bool isHolding = false;
     private float mouseStartPos;
-
+    private ToolCursorController cursor;
     private void Start()
     {
         colorSelect = GetComponent<Image>().color;
+        cursor = FindAnyObjectByType<ToolCursorController>();
     }
 
     public void OnPointerDown(PointerEventData pointerEventData)
@@ -27,6 +28,18 @@ public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         mouseStartPos = Input.mousePosition.x;
         isHolding = true;
         StartCoroutine(DetectHold());
+    }
+
+    public void OnPointerEnter(PointerEventData pointerEventData)
+    {
+        cursor.SetToHover();
+        cursor.SetBodyColor(colorSelect);
+    }
+
+    public void OnPointerExit(PointerEventData pointerEventData)
+    {
+        cursor.ResetHover();
+        cursor.SetBodyColor(Color.white);
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
@@ -46,7 +59,7 @@ public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             // Linearly interpolate the color mix amount
             colorAdjustmentAmount = Mathf.Lerp(MAX_COLOR_MIX, MIN_COLOR_MIX, t);
             AdjustColor(colorAdjustmentAmount);
-            
+            cursor.SetTipColor(paletteSR.color);
             yield return null;
         }
     }
@@ -57,6 +70,7 @@ public class ChangeColor : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (paletteColor == Color.white)
         {
             paletteSR.color = colorSelect;
+            cursor.SetTipColor(paletteSR.color);
         }
         else
         {
